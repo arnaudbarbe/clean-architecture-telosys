@@ -1,0 +1,25 @@
+package ${target.javaPackageFromFolder(${SRC})};
+
+import java.util.List;
+import java.util.UUID;
+
+import javax.validation.constraints.NotNull;
+import fr.arnaud.cleanarchitecture.core.model.${entity.name};
+
+#if($entity.keyAttribute.hasTag("uuid"))
+#set( $id = "UUID " + $entity.keyAttribute.name)
+#else	
+#set( $id = "$entity.keyAttribute.simpleType $entity.keyAttribute.name")
+#end
+public interface ${entity.name}Service {
+	
+    UUID create${entity.name}(@NotNull ${entity.name} entity);
+
+    void delete${entity.name}(@NotNull ${id});
+    
+    ${entity.name} get${entity.name}(@NotNull ${id});
+    
+    List<${entity.name}> get${entity.name}s();
+
+    void update${entity.name}(@NotNull ${id}, @NotNull ${entity.name} entity);
+}

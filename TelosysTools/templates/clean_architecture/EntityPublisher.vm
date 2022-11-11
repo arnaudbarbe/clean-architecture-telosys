@@ -1,0 +1,21 @@
+package ${target.javaPackageFromFolder(${SRC})};
+
+import java.util.UUID;
+
+import org.springframework.integration.annotation.Gateway;
+import org.springframework.integration.annotation.MessagingGateway;
+
+import fr.arnaud.cleanarchitecture.infrastructure.delivery.dto.v1.${entity.name}Dto;
+
+@MessagingGateway
+public interface ${entity.name}Publisher {
+
+    @Gateway(requestChannel = "create${entity.name}V1OutboundChannel")
+    void create${entity.name}(${entity.name}Dto league);
+    
+    @Gateway(requestChannel = "update${entity.name}V1OutboundChannel")
+    void update${entity.name}(${entity.name}Dto league);
+
+    @Gateway(requestChannel = "delete${entity.name}V1OutboundChannel")
+    void delete${entity.name}(UUID id);
+}

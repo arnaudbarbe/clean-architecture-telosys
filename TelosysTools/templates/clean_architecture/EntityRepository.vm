@@ -1,0 +1,24 @@
+package ${target.javaPackageFromFolder(${SRC})};
+
+import java.util.List;
+import java.util.UUID;
+
+import fr.arnaud.cleanarchitecture.core.model.${entity.name};
+
+#if($entity.keyAttribute.hasTag("uuid"))
+#set( $id = "UUID " + $entity.keyAttribute.name)
+#else	
+#set( $id = "$entity.keyAttribute.simpleType $entity.keyAttribute.name")
+#end
+public interface ${entity.name}Repository {
+	
+    ${entity.name} findById(${id});
+
+    void save(${entity.name} entity);
+    
+    List<${entity.name}> findAll();
+    
+    void delete(${id});
+
+    void update(${id}, ${entity.name} entity);
+}

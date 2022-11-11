@@ -1,0 +1,65 @@
+package ${target.javaPackageFromFolder(${SRC})};
+
+import org.springframework.amqp.core.AmqpTemplate;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.integration.amqp.outbound.AmqpOutboundEndpoint;
+import org.springframework.integration.annotation.ServiceActivator;
+import org.springframework.integration.channel.DirectChannel;
+import org.springframework.messaging.MessageChannel;
+
+import fr.arnaud.cleanarchitecture.infrastructure.configuration.rabbitmq.v1.listener.RabbitMQ${entity.name}EntityListener;
+
+/**
+ * channel class for entity "${entity.name}"
+ *
+ * @author abarbe
+ *
+ */
+@Configuration
+public class RabbitMQ${entity.name}Channel {
+
+    
+    @Bean
+    public MessageChannel create${entity.name}V1OutboundChannel() {
+        return new DirectChannel();
+    }
+
+    @Bean
+    @ServiceActivator(inputChannel = "create${entity.name}V1OutboundChannel")
+    public AmqpOutboundEndpoint create${entity.name}Outbound(final AmqpTemplate amqpTemplate) {
+        AmqpOutboundEndpoint outbound = new AmqpOutboundEndpoint(amqpTemplate);
+        outbound.setExchangeName(RabbitMQ${entity.name}EntityListener.CREATE_CHAMPIONSHIP_EXCHANGE_NAME);
+        outbound.setRoutingKey("#");
+        return outbound;
+    }
+    
+    public MessageChannel update${entity.name}V1OutboundChannel() {
+        return new DirectChannel();
+    }
+
+    @Bean
+    @ServiceActivator(inputChannel = "update${entity.name}V1OutboundChannel")
+    public AmqpOutboundEndpoint update${entity.name}Outbound(final AmqpTemplate amqpTemplate) {
+        AmqpOutboundEndpoint outbound = new AmqpOutboundEndpoint(amqpTemplate);
+        outbound.setExchangeName(RabbitMQ${entity.name}EntityListener.UPDATE_CHAMPIONSHIP_EXCHANGE_NAME);
+        outbound.setRoutingKey("#");
+        return outbound;
+    }
+    
+
+    @Bean
+    public MessageChannel delete${entity.name}V1OutboundChannel() {
+        return new DirectChannel();
+    }
+
+
+    @Bean
+    @ServiceActivator(inputChannel = "delete${entity.name}V1OutboundChannel")
+    public AmqpOutboundEndpoint delete${entity.name}Outbound(final AmqpTemplate amqpTemplate) {
+        AmqpOutboundEndpoint outbound = new AmqpOutboundEndpoint(amqpTemplate);
+        outbound.setExchangeName(RabbitMQ${entity.name}EntityListener.DELETE_CHAMPIONSHIP_EXCHANGE_NAME);
+        outbound.setRoutingKey("#");
+        return outbound;
+    }
+}

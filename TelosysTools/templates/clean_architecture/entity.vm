@@ -1,0 +1,50 @@
+package ${target.javaPackageFromFolder(${SRC})};
+
+import java.util.UUID;
+
+import javax.validation.constraints.NotNull;
+
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.ToString;
+import lombok.experimental.FieldDefaults;
+
+#set( $dataFields = $entity.getAttributesByCriteria( $const.NOT_KEY, $const.NOT_IN_SELECTED_LINKS ) )
+#set( $objectFields = $entity.getAttributesByCriteria( $const.NOT_KEY, $const.IN_SELECTED_LINKS ) )
+
+@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+@FieldDefaults(level=AccessLevel.PRIVATE)
+@Getter
+@EqualsAndHashCode(of= {#foreach( $field in $entity.attributes )#if ( $field.hasTag("hashcodeequals"))"$field.name",#end #end})
+@ToString(of= {#foreach( $field in $entity.attributes )#if ( $field.hasTag("hashcodeequals"))"$field.name",#end #end})
+@Builder(builderClassName = "${entity.name}Builder")
+public class ${entity.name} {
+
+#foreach( $key in $entity.keyAttributes )
+#if($key.isDatabaseNotNull())
+	@NotNull 
+#end
+#if($key.hasTag("uuid"))
+	final UUID $key.name#if($key.hasInitialValue())= ${key.initialValue}#end;
+#else
+	final $key.simpleType $key.name#if($key.hasInitialValue())= ${key.initialValue}#end;
+#end
+#end
+
+#foreach( $field in $dataFields )
+#if($field.isDatabaseNotNull())
+	@NotNull
+#end
+	final $field.simpleType $field.name#if($field.hasInitialValue())= ${field.initialValue}#end;
+#end
+#foreach( $field in $objectFields )
+#if($field.isDatabaseNotNull())
+	@NotNull
+#end
+	final $field.simpleType $field.name#if($field.hasInitialValue())= ${field.initialValue}#end;
+#end
+
+}

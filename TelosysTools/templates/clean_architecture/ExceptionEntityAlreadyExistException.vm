@@ -1,0 +1,10 @@
+package ${target.javaPackageFromFolder(${SRC})};
+
+public class EntityAlreadyExistException extends RuntimeException {
+
+	private static final long serialVersionUID = 1L;
+
+	public EntityAlreadyExistException(final String message) {
+        super(message);
+    }
+}
