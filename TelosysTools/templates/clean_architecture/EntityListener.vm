@@ -1,0 +1,91 @@
+package ${target.javaPackageFromFolder(${SRC})};
+
+import org.springframework.amqp.core.BindingBuilder;
+import org.springframework.amqp.core.Declarables;
+import org.springframework.amqp.core.DirectExchange;
+import org.springframework.amqp.core.Queue;
+import org.springframework.amqp.rabbit.connection.ConnectionFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.integration.amqp.dsl.Amqp;
+import org.springframework.integration.dsl.IntegrationFlow;
+import org.springframework.integration.dsl.IntegrationFlows;
+
+import ${ROOT_PKG}.infrastructure.delivery.consumer.handler.v1.MessageCreate${entity.name}Handler;
+import ${ROOT_PKG}.infrastructure.delivery.consumer.handler.v1.MessageDelete${entity.name}Handler;
+import ${ROOT_PKG}.infrastructure.delivery.consumer.handler.v1.MessageUpdate${entity.name}Handler;
+#set( $lowerEntityName = $entity.name.toLowerCase() )
+#set( $upperEntityName = $entity.name.toUpperCase() )
+@Configuration
+public class RabbitMQ${entity.name}EntityListener {
+
+	public static final String CREATE_${upperEntityName}_QUEUE_NAME = "entity.v1.${lowerEntityName}.create";
+    
+	public static final String UPDATE_${upperEntityName}_QUEUE_NAME = "entity.v1.${lowerEntityName}.update";
+
+	public static final String DELETE_${upperEntityName}_QUEUE_NAME = "entity.v1.${lowerEntityName}.delete";
+
+	public static final String CREATE_${upperEntityName}_EXCHANGE_NAME = "entity.v1.${lowerEntityName}.create";
+	
+	public static final String UPDATE_${upperEntityName}_EXCHANGE_NAME = "entity.v1.${lowerEntityName}.update";
+    
+	public static final String DELETE_${upperEntityName}_EXCHANGE_NAME = "entity.v1.${lowerEntityName}.delete";
+
+    @Autowired
+    MessageCreate${entity.name}Handler messageCreate${entity.name}Handler;
+    
+    @Autowired
+    MessageUpdate${entity.name}Handler messageUpdate${entity.name}Handler;
+    
+    @Autowired
+    MessageDelete${entity.name}Handler messageDelete${entity.name}Handler;
+
+    @Bean
+    public Declarables ${lowerEntityName}De${lowerEntityName}s() {
+    	
+    	Queue create${entity.name}RequestQueue = new Queue(CREATE_${upperEntityName}_QUEUE_NAME, true, false, false);
+    	Queue update${entity.name}RequestQueue = new Queue(UPDATE_${upperEntityName}_QUEUE_NAME, true, false, false);
+    	Queue delete${entity.name}RequestQueue = new Queue(DELETE_${upperEntityName}_QUEUE_NAME, true, false, false);
+
+    	DirectExchange create${entity.name}Exchange = new DirectExchange(CREATE_${upperEntityName}_EXCHANGE_NAME, true, false);
+    	DirectExchange update${entity.name}Exchange = new DirectExchange(UPDATE_${upperEntityName}_EXCHANGE_NAME, true, false);
+    	DirectExchange delete${entity.name}Exchange = new DirectExchange(DELETE_${upperEntityName}_EXCHANGE_NAME, true, false);
+        
+        return new Declarables(
+        		create${entity.name}RequestQueue,
+        		update${entity.name}RequestQueue,
+        		delete${entity.name}RequestQueue,
+        		create${entity.name}Exchange,
+        		update${entity.name}Exchange,
+        		delete${entity.name}Exchange,
+                BindingBuilder.bind(create${entity.name}RequestQueue).to(create${entity.name}Exchange).with("#"),
+                BindingBuilder.bind(update${entity.name}RequestQueue).to(update${entity.name}Exchange).with("#"),
+                BindingBuilder.bind(delete${entity.name}RequestQueue).to(delete${entity.name}Exchange).with("#")
+        );
+    }
+    
+    // consumer
+    @Bean
+    public IntegrationFlow create${entity.name}Flow(final ConnectionFactory connectionFactory) {
+        return IntegrationFlows.from(Amqp.inboundGateway(connectionFactory, CREATE_${upperEntityName}_QUEUE_NAME))
+                .handle(this.messageCreate${entity.name}Handler::handle)
+                .get();
+    }
+    
+
+    @Bean
+    public IntegrationFlow update${entity.name}Flow(final ConnectionFactory connectionFactory) {
+        return IntegrationFlows.from(Amqp.inboundGateway(connectionFactory, UPDATE_${upperEntityName}_QUEUE_NAME))
+                .handle(this.messageUpdate${entity.name}Handler::handle)
+                .get();
+    }
+    
+
+    @Bean
+    public IntegrationFlow delete${entity.name}Flow(final ConnectionFactory connectionFactory) {
+        return IntegrationFlows.from(Amqp.inboundGateway(connectionFactory, DELETE_${upperEntityName}_QUEUE_NAME))
+                .handle(this.messageDelete${entity.name}Handler::handle)
+                .get();
+    }
+}

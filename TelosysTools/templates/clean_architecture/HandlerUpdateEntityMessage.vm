@@ -1,0 +1,35 @@
+package ${target.javaPackageFromFolder(${SRC})};
+
+#set( $lowerEntityName = $entity.name.toLowerCase() )
+#set( $upperEntityName = $entity.name.toUpperCase() )
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.integration.handler.GenericHandler;
+import org.springframework.messaging.MessageHeaders;
+import org.springframework.stereotype.Service;
+
+import fr.arnaud.cleanarchitecture.core.service.${entity.name}Service;
+import fr.arnaud.cleanarchitecture.infrastructure.delivery.dto.v1.${entity.name}Dto;
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
+@Service
+public class MessageUpdate${entity.name}Handler implements GenericHandler<${entity.name}Dto>{
+
+	private ${entity.name}Service ${lowerEntityName}Service;
+
+	@Autowired
+	public MessageUpdate${entity.name}Handler(final ${entity.name}Service ${lowerEntityName}Service) {
+		super();
+		this.${lowerEntityName}Service = ${lowerEntityName}Service;
+	}
+
+	@Override
+	public Object handle(final ${entity.name}Dto ${lowerEntityName}, MessageHeaders headers) {
+		try {
+			this.${lowerEntityName}Service.update${entity.name}(${lowerEntityName}.id(), ${lowerEntityName}.toEntity());
+		} catch (Exception e) {
+			log.error(e.getMessage());
+		}
+		return null;
+	}
+}

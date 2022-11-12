@@ -1,0 +1,82 @@
+package ${target.javaPackageFromFolder(${SRC})};
+
+import org.springframework.amqp.core.AmqpTemplate;
+import org.springframework.amqp.core.Declarables;
+import org.springframework.amqp.core.DirectExchange;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.integration.amqp.outbound.AmqpOutboundEndpoint;
+import org.springframework.integration.annotation.ServiceActivator;
+import org.springframework.integration.channel.DirectChannel;
+import org.springframework.messaging.MessageChannel;
+
+#set( $lowerEntityName = $entity.name.toLowerCase() )
+#set( $upperEntityName = $entity.name.toUpperCase() )
+
+@Configuration
+public class RabbitMQ${entity.name}EventChannel {
+
+	private static final String CREATE_${upperEntityName}_EVENT_EXCHANGE_NAME = "event.v1.${lowerEntityName}.create";
+	
+	private static final String UPDATE_${upperEntityName}_EVENT_EXCHANGE_NAME = "event.v1.${lowerEntityName}.update";
+    
+	private static final String DELETE_${upperEntityName}_EVENT_EXCHANGE_NAME = "event.v1.${lowerEntityName}.delete";
+
+    @Bean
+    public Declarables ${lowerEntityName}Ev${lowerEntityName}rables() {
+    	
+    	DirectExchange createExchangeRequest = new DirectExchange(CREATE_${upperEntityName}_EVENT_EXCHANGE_NAME, true, false);
+    	DirectExchange updateExchangeRequest = new DirectExchange(UPDATE_${upperEntityName}_EVENT_EXCHANGE_NAME, true, false);
+    	DirectExchange deleteExchangeRequest = new DirectExchange(DELETE_${upperEntityName}_EVENT_EXCHANGE_NAME, true, false);
+        
+        return new Declarables(
+        		createExchangeRequest,
+        		updateExchangeRequest,
+        		deleteExchangeRequest
+        );
+    }
+    
+    // publisher    
+    @Bean
+    public MessageChannel create${entity.name}EventV1OutboundChannel() {
+        return new DirectChannel();
+    }
+
+    @Bean
+    @ServiceActivator(inputChannel = "create${entity.name}EventV1OutboundChannel")
+    public AmqpOutboundEndpoint create${entity.name}EventV1Outbound(final AmqpTemplate amqpTemplate) {
+        AmqpOutboundEndpoint outbound = new AmqpOutboundEndpoint(amqpTemplate);
+        outbound.setExchangeName(CREATE_${upperEntityName}_EVENT_EXCHANGE_NAME);
+        outbound.setRoutingKey("#");
+        return outbound;
+    }
+    
+    public MessageChannel update${entity.name}EventV1OutboundChannel() {
+        return new DirectChannel();
+    }
+
+    @Bean
+    @ServiceActivator(inputChannel = "update${entity.name}EventV1OutboundChannel")
+    public AmqpOutboundEndpoint update${entity.name}EventV1Outbound(final AmqpTemplate amqpTemplate) {
+        AmqpOutboundEndpoint outbound = new AmqpOutboundEndpoint(amqpTemplate);
+        outbound.setExchangeName(UPDATE_${upperEntityName}_EVENT_EXCHANGE_NAME);
+        outbound.setRoutingKey("#");
+        return outbound;
+    }
+    
+
+    @Bean
+    public MessageChannel delete${entity.name}EventV1OutboundChannel() {
+        return new DirectChannel();
+    }
+
+
+    @Bean
+    @ServiceActivator(inputChannel = "delete${entity.name}EventV1OutboundChannel")
+    public AmqpOutboundEndpoint delete${entity.name}EventV1Outbound(final AmqpTemplate amqpTemplate) {
+        AmqpOutboundEndpoint outbound = new AmqpOutboundEndpoint(amqpTemplate);
+        outbound.setExchangeName(DELETE_${upperEntityName}_EVENT_EXCHANGE_NAME);
+        outbound.setRoutingKey("#");
+        return outbound;
+    }
+}

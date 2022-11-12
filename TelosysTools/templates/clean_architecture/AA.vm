@@ -1,0 +1,30 @@
+package ${target.javaPackageFromFolder(${SRC})};
+
+
+#set( $dataFields = $entity.getAttributesByCriteria( $const.NOT_KEY, $const.NOT_IN_SELECTED_LINKS ) )
+#set( $objectFields = $entity.getAttributesByCriteria( $const.NOT_KEY, $const.IN_SELECTED_LINKS ) )
+
+#set( $lowerEntityName = $entity.name.toLowerCase() )
+#set( $upperEntityName = $entity.name.toUpperCase() )
+
+
+
+#if($entity.keyAttribute.hasTag("uuid"))
+#set( $id = "UUID " + $entity.keyAttribute.name)
+#else	
+#set( $id = "$entity.keyAttribute.simpleType $entity.keyAttribute.name")
+#end
+
+
+
+#if($entity.keyAttribute.hasTag("uuid"))
+#set( $idType = "UUID")
+import java.util.${idType};
+#else	
+#set( $idType = $entity.keyAttribute.simpleType)
+import ${entity.keyAttribute.simpleType}
+#end
+
+
+${ROOT_PKG}
+

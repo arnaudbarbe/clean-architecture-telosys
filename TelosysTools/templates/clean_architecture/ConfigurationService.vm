@@ -1,0 +1,47 @@
+package ${target.javaPackageFromFolder(${SRC})};
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
+import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
+
+import ${ROOT_PKG}.CleanArchitectureApplication;
+#foreach($entit in $model.allEntites )
+import ${ROOT_PKG}.core.repository.${entit.name}Repository;
+#end
+#foreach($entit in $model.allEntites )
+import ${ROOT_PKG}.core.service.Domain${entit.name}Service;
+#end
+#foreach($entit in $model.allEntites )
+import ${ROOT_PKG}.core.service.${entit.name}Service;
+#end
+
+@Configuration
+@ComponentScan(basePackageClasses = CleanArchitectureApplication.class)
+public class ServiceConfiguration {
+	
+    public static final String DATETIME_FORMAT = "dd-MM-yyyy HH:mm";
+    public static final LocalDateTime FIXED_DATE = LocalDateTime.now();
+    public static final LocalDateTimeSerializer LOCAL_DATETIME_SERIALIZER = new LocalDateTimeSerializer(DateTimeFormatter.ofPattern(DATETIME_FORMAT));
+
+#foreach($entit in $model.allEntites )
+#set( $lowerEntityName = $entit.name.toLowerCase() )
+#set( $upperEntityName = $entit.name.toUpperCase() )
+    @Bean
+    ${entit.name}Service ${lowerEntityName}Service(final ${entit.name}Repository ${lowerEntityName}Repository) {
+        return new Domain${entit.name}Service(${lowerEntityName}Repository);
+    }
+#end
+    
+    @Bean
+    public Jackson2ObjectMapperBuilderCustomizer jsonCustomizer() {
+        return builder -> builder.serializationInclusion(JsonInclude.Include.NON_NULL)
+          .serializers(LOCAL_DATETIME_SERIALIZER);
+    }
+}

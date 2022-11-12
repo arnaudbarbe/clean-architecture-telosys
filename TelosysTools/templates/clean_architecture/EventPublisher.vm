@@ -1,0 +1,26 @@
+package ${target.javaPackageFromFolder(${SRC})};
+
+import java.util.UUID;
+
+import org.springframework.integration.annotation.Gateway;
+import org.springframework.integration.annotation.MessagingGateway;
+
+import ${ROOT_PKG}.infrastructure.configuration.eventdriven.Event;
+import ${ROOT_PKG}.infrastructure.delivery.dto.v1.${entity.name}Dto;
+#if($entity.keyAttribute.hasTag("uuid"))
+#set( $idType = "UUID")
+#else	
+#set( $idType = $entity.keyAttribute.simpleType)
+#end
+@MessagingGateway
+public interface ${entity.name}EventPublisher {
+
+    @Gateway(requestChannel = "create${entity.name}EventV1OutboundChannel")
+    void create${entity.name}Event(Event<${entity.name}Dto> event);
+    
+    @Gateway(requestChannel = "update${entity.name}EventV1OutboundChannel")
+    void update${entity.name}Event(Event<${entity.name}Dto> event);
+
+    @Gateway(requestChannel = "delete${entity.name}EventV1OutboundChannel")
+    void delete${entity.name}Event(Event<${idType}> event);
+}

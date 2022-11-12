@@ -1,0 +1,80 @@
+package ${target.javaPackageFromFolder(${SRC})};
+
+import java.util.UUID;
+
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import org.springframework.hateoas.RepresentationModel;
+
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
+import lombok.experimental.FieldDefaults;
+#set( $dataFields = $entity.getAttributesByCriteria( $const.NOT_KEY, $const.NOT_IN_SELECTED_LINKS ) )
+#set( $objectFields = $entity.getAttributesByCriteria( $const.NOT_KEY, $const.IN_SELECTED_LINKS ) )
+
+@Getter
+@ToString 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor(access = AccessLevel.PUBLIC)
+@FieldDefaults(level = AccessLevel.PRIVATE)
+public class ${entity.name}Model extends RepresentationModel<${entity.name}Model> implements Model {
+
+	private static final long serialVersionUID = 1L;
+	
+#foreach( $key in $entity.keyAttributes )
+#if($key.isNotNull())	@NotNull #end 
+#if($key.isNotEmpty()) 	@NotEmpty #end
+#if($key.hasTag("uuid"))
+ 	UUID $key.name#if($key.hasInitialValue())= ${key.initialValue}#end;
+#else
+	$key.simpleType $key.name#if($key.hasInitialValue())= ${key.initialValue}#end;
+#end
+#end
+#foreach( $field in $dataFields )
+#if($field.isNotNull())	@NotNull #end 
+#if($field.isNotEmpty())	@NotEmpty #end
+	$field.simpleType $field.name#if($field.hasInitialValue())= ${field.initialValue}#end;
+#end
+#foreach( $object in $objectFields )
+#if($object.isNotNull())	@NotNull #end 
+#if($object.isNotEmpty())	@NotEmpty #end
+	$object.simpleType $object.name#if($object.hasInitialValue())= ${object.initialValue}#end;
+#end
+
+	public ${ROOT_PKG}.core.model.${entity.name} toEntity() {
+		return ${ROOT_PKG}.core.model.${entity.name}.builder()
+#foreach( $key in $entity.keyAttributes )
+				.${key.name}(this.${key.name})
+#end
+#foreach( $field in $dataFields )
+				.${field.name}(this.${field.name})
+#end
+#foreach( $object in $objectFields )
+				.${object.name}(this.${object.name}.toEntity())
+#end
+
+				.build();
+	}
+	
+	public static ${entity.name}Model fromEntity(final ${ROOT_PKG}.core.model.${entity.name} entity) {
+		if (entity == null) {
+			return null;
+		} else {
+			return new ${entity.name}Model(
+#foreach( $key in $entity.keyAttributes )
+					entity.get${fn.capitalize($key.name)}(),
+#end
+#foreach( $field in $dataFields )
+					entity.get${fn.capitalize($field.name)}(),
+#end
+#foreach( $object in $objectFields )
+					${object.name}Dto.fromEntity(entity.get${fn.capitalize($object.name)}(),
+#end
+			);
+		}
+	}
+}

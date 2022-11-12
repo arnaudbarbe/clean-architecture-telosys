@@ -1,0 +1,6 @@
+package ${target.javaPackageFromFolder(${SRC})};
+
+public enum Role {
+
+	USER, ADMIN
+}

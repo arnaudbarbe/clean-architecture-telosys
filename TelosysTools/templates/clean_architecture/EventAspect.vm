@@ -7,11 +7,10 @@ import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import fr.arnaud.cleanarchitecture.core.model.${entity.name};
-import fr.arnaud.cleanarchitecture.infrastructure.configuration.eventdriven.Event;
-import fr.arnaud.cleanarchitecture.infrastructure.configuration.rabbitmq.v1.publisher.${entity.name}EventPublisher;
-import fr.arnaud.cleanarchitecture.infrastructure.delivery.dto.v1.${entity.name}Dto;
+import ${ROOT_PKG}.core.model.${entity.name};
+import ${ROOT_PKG}.infrastructure.configuration.eventdriven.Event;
+import ${ROOT_PKG}.infrastructure.configuration.rabbitmq.v1.publisher.${entity.name}EventPublisher;
+import ${ROOT_PKG}.infrastructure.delivery.dto.v1.${entity.name}Dto;
 
 @Aspect
 @Component
@@ -24,7 +23,7 @@ public class ${entity.name}Aspect {
 		this.domainObjectEventPublisher = domainObjectEventPublisher;
 	}
 	
-	@After("execution(* fr.arnaud.cleanarchitecture.core.service.${entity.name.toLowerCase()}.Domain${entity.name}Service.create${entity.name}(..)) && args(domainObject)")
+	@After("execution(* ${ROOT_PKG}.core.service.Domain${entity.name}Service.create${entity.name}(..)) && args(domainObject)")
     public void eventAfterCreate${entity.name}(final JoinPoint joinPoint, final ${entity.name} domainObject) {
 
     	Event<${entity.name}Dto> event = 
@@ -35,7 +34,7 @@ public class ${entity.name}Aspect {
     	this.domainObjectEventPublisher.create${entity.name}Event(event);
     }
 
-	@After("execution(* fr.arnaud.cleanarchitecture.core.service.${entity.name.toLowerCase()}.Domain${entity.name}Service.update${entity.name}(..)) && args(id, domainObject)")
+	@After("execution(* ${ROOT_PKG}.core.service.Domain${entity.name}Service.update${entity.name}(..)) && args(id, domainObject)")
     public void eventAfterUpdate${entity.name}(final JoinPoint joinPoint, final UUID id, final ${entity.name} domainObject) {
 
     	Event<${entity.name}Dto> event = 
@@ -46,7 +45,7 @@ public class ${entity.name}Aspect {
     	this.domainObjectEventPublisher.update${entity.name}Event(event);
     }
 
-	@After("execution(* fr.arnaud.cleanarchitecture.core.service.${entity.name.toLowerCase()}.Domain${entity.name}Service.delete${entity.name}(..)) && args(id)")
+	@After("execution(* ${ROOT_PKG}.core.service.Domain${entity.name}Service.delete${entity.name}(..)) && args(id)")
     public void eventAfterdelete${entity.name}(final JoinPoint joinPoint, final UUID id) {
 
     	Event<UUID> event = 

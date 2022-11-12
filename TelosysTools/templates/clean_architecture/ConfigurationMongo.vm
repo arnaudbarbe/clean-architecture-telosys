@@ -1,0 +1,9 @@
+package ${target.javaPackageFromFolder(${SRC})};
+
+import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
+import org.springframework.stereotype.Component;
+
+@EnableMongoRepositories(basePackages = {"${ROOT_PKG}.infrastructure.persistence.mongo"})
+@Component
+public class MongoDBConfiguration {
+}

@@ -1,7 +1,7 @@
 // Entity Team
 
 Team {
-	id: string {#uuid, #hashcodeequals, @Id };
-	name: string {#hashcodeequals, @DbSize(40)};
+	id: string {#uuid, #tostring, #hashcodeequals, @Id };
+	name: string {#tostring, #hashcodeequals, @DbSize(40)};
 	
 }

@@ -1,0 +1,7 @@
+package ${target.javaPackageFromFolder(${SRC})};
+
+import javax.validation.constraints.NotNull;
+
+public record UserDto(@NotNull String username, @NotNull String password) {
+
+}

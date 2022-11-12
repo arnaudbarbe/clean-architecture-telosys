@@ -1,0 +1,42 @@
+package ${target.javaPackageFromFolder(${SRC})};
+#set( $lowerEntityName = $entity.name.toLowerCase() )
+#set( $upperEntityName = $entity.name.toUpperCase() )
+#if($entity.keyAttribute.hasTag("uuid"))
+#set( $idType = "UUID")
+import java.util.${idType};
+#else	
+#set( $idType = $entity.keyAttribute.simpleType)
+import ${entity.keyAttribute.simpleType}
+#end
+
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.integration.handler.GenericHandler;
+import org.springframework.messaging.MessageHeaders;
+import org.springframework.stereotype.Service;
+
+import fr.arnaud.cleanarchitecture.core.service.${entity.name}Service;
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
+@Service
+public class MessageDelete${entity.name}Handler implements GenericHandler<${idType}>{
+
+	private ${entity.name}Service ${lowerEntityName}Service;
+
+	@Autowired
+	public MessageDelete${entity.name}Handler(final ${entity.name}Service ${lowerEntityName}Service) {
+		super();
+		this.${lowerEntityName}Service = ${lowerEntityName}Service;
+	}
+
+	@Override
+	public Object handle(final ${idType} id, final MessageHeaders headers) {
+		try {
+			this.${lowerEntityName}Service.delete${entity.name}(id);
+		} catch (Exception e) {
+			log.error(e.getMessage());
+		}
+		return null;
+	}
+}

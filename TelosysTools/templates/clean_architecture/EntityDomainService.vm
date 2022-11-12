@@ -1,0 +1,67 @@
+package ${target.javaPackageFromFolder(${SRC})};
+
+import java.util.List;
+
+import javax.transaction.Transactional;
+
+import fr.arnaud.cleanarchitecture.core.model.${entity.name};
+import fr.arnaud.cleanarchitecture.core.repository.${entity.name}Repository;
+import lombok.extern.slf4j.Slf4j;
+#set( $lowerEntityName = $entity.name.toLowerCase() )
+#set( $upperEntityName = $entity.name.toUpperCase() )
+
+#if($entity.keyAttribute.hasTag("uuid"))
+#set( $id = "UUID " + $entity.keyAttribute.name)
+#else	
+#set( $id = "$entity.keyAttribute.simpleType $entity.keyAttribute.name")
+#end
+
+#if($entity.keyAttribute.hasTag("uuid"))
+#set( $idType = "UUID")
+import java.util.${idType};
+#else	
+#set( $idType = $entity.keyAttribute.simpleType)
+import ${entity.keyAttribute.simpleType}
+#end
+@Slf4j
+@Transactional
+public class Domain${entity.name}Service implements ${entity.name}Service {
+
+	private final ${entity.name}Repository ${lowerEntityName}Repository;
+
+	public Domain${entity.name}Service(final ${entity.name}Repository ${lowerEntityName}Repository) {
+		this.${lowerEntityName}Repository = ${lowerEntityName}Repository;
+	}
+
+	@Override
+	public ${idType} create${entity.name}(final ${entity.name} ${lowerEntityName}) {
+		log.info("Create ${lowerEntityName} {}", ${lowerEntityName});
+		this.${lowerEntityName}Repository.save(${lowerEntityName});
+
+		return ${lowerEntityName}.getId();
+	}
+
+	@Override
+	public void delete${entity.name}(final ${id}) {
+		log.info("Delete ${lowerEntityName}{}", id);
+		this.${lowerEntityName}Repository.delete(id);
+	}
+
+	@Override
+	public ${entity.name} get${entity.name}(final ${id}) {
+		log.info("Get ${lowerEntityName} {}", id);
+		return this.${lowerEntityName}Repository.findById(id);
+	}
+
+	@Override
+	public List<${entity.name}> get${entity.name}s() {
+		log.info("Get ${lowerEntityName}s");
+		return this.${lowerEntityName}Repository.findAll();
+	}
+
+	@Override
+	public void update${entity.name}(final ${id}, final ${entity.name} ${lowerEntityName}) {
+		log.info("Update ${lowerEntityName} {} {}", id, ${lowerEntityName});
+ 		this.${lowerEntityName}Repository.update(id, ${lowerEntityName});
+	}
+}

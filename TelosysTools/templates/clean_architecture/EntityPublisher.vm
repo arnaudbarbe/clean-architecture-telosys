@@ -5,17 +5,23 @@ import java.util.UUID;
 import org.springframework.integration.annotation.Gateway;
 import org.springframework.integration.annotation.MessagingGateway;
 
-import fr.arnaud.cleanarchitecture.infrastructure.delivery.dto.v1.${entity.name}Dto;
+import ${ROOT_PKG}.infrastructure.delivery.dto.v1.${entity.name}Dto;
+
+#if($entity.keyAttribute.hasTag("uuid"))
+#set( $id = "UUID " + $entity.keyAttribute.name)
+#else	
+#set( $id = "$entity.keyAttribute.simpleType $entity.keyAttribute.name")
+#end
 
 @MessagingGateway
 public interface ${entity.name}Publisher {
 
     @Gateway(requestChannel = "create${entity.name}V1OutboundChannel")
-    void create${entity.name}(${entity.name}Dto league);
+    void create${entity.name}(${entity.name}Dto dto);
     
     @Gateway(requestChannel = "update${entity.name}V1OutboundChannel")
-    void update${entity.name}(${entity.name}Dto league);
+    void update${entity.name}(${entity.name}Dto dto);
 
     @Gateway(requestChannel = "delete${entity.name}V1OutboundChannel")
-    void delete${entity.name}(UUID id);
+    void delete${entity.name}($id);
 }

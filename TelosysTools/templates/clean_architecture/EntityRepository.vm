@@ -2,8 +2,7 @@ package ${target.javaPackageFromFolder(${SRC})};
 
 import java.util.List;
 import java.util.UUID;
-
-import fr.arnaud.cleanarchitecture.core.model.${entity.name};
+import ${ROOT_PKG}.core.model.${entity.name};
 
 #if($entity.keyAttribute.hasTag("uuid"))
 #set( $id = "UUID " + $entity.keyAttribute.name)

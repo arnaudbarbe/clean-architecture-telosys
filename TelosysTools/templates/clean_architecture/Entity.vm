@@ -19,7 +19,7 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level=AccessLevel.PRIVATE)
 @Getter
 @EqualsAndHashCode(of= {#foreach( $field in $entity.attributes )#if ( $field.hasTag("hashcodeequals"))"$field.name",#end #end})
-@ToString(of= {#foreach( $field in $entity.attributes )#if ( $field.hasTag("hashcodeequals"))"$field.name",#end #end})
+@ToString(of= {#foreach( $field in $entity.attributes )#if ( $field.hasTag("tostring"))"$field.name",#end #end})
 @Builder(builderClassName = "${entity.name}Builder")
 public class ${entity.name} {
 
@@ -40,11 +40,11 @@ public class ${entity.name} {
 #end
 	final $field.simpleType $field.name#if($field.hasInitialValue())= ${field.initialValue}#end;
 #end
-#foreach( $field in $objectFields )
-#if($field.isDatabaseNotNull())
+#foreach( $object in $objectFields )
+#if($object.isDatabaseNotNull())
 	@NotNull
 #end
-	final $field.simpleType $field.name#if($field.hasInitialValue())= ${field.initialValue}#end;
+	final $object.simpleType $object.name#if($object.hasInitialValue())= ${object.initialValue}#end;
 #end
 
 }

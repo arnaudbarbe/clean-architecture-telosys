@@ -3,8 +3,8 @@
 Player {
 
 	id: string {#uuid, #hashcodeequals, @Id };
-	firstName: string {#hashcodeequals, @DbSize(40), @NotEmpty };
-	lastName: string {#hashcodeequals, @DbSize(40), @NotEmpty };
+	firstName: string {#hashcodeequals, #tostring, @DbSize(40), @NotEmpty };
+	lastName: string {#hashcodeequals, #tostring, @DbSize(40), @NotEmpty };
 
 
 }

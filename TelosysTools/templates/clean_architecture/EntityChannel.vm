@@ -7,9 +7,10 @@ import org.springframework.integration.amqp.outbound.AmqpOutboundEndpoint;
 import org.springframework.integration.annotation.ServiceActivator;
 import org.springframework.integration.channel.DirectChannel;
 import org.springframework.messaging.MessageChannel;
+import ${ROOT_PKG}.infrastructure.configuration.rabbitmq.v1.listener.RabbitMQ${entity.name}EntityListener;
 
-import fr.arnaud.cleanarchitecture.infrastructure.configuration.rabbitmq.v1.listener.RabbitMQ${entity.name}EntityListener;
-
+#set( $lowerEntityName = $entity.name.toLowerCase() )
+#set( $upperEntityName = $entity.name.toUpperCase() )
 /**
  * channel class for entity "${entity.name}"
  *
@@ -29,7 +30,7 @@ public class RabbitMQ${entity.name}Channel {
     @ServiceActivator(inputChannel = "create${entity.name}V1OutboundChannel")
     public AmqpOutboundEndpoint create${entity.name}Outbound(final AmqpTemplate amqpTemplate) {
         AmqpOutboundEndpoint outbound = new AmqpOutboundEndpoint(amqpTemplate);
-        outbound.setExchangeName(RabbitMQ${entity.name}EntityListener.CREATE_CHAMPIONSHIP_EXCHANGE_NAME);
+        outbound.setExchangeName(RabbitMQ${entity.name}EntityListener.CREATE_${upperEntityName}_EXCHANGE_NAME);
         outbound.setRoutingKey("#");
         return outbound;
     }
@@ -42,7 +43,7 @@ public class RabbitMQ${entity.name}Channel {
     @ServiceActivator(inputChannel = "update${entity.name}V1OutboundChannel")
     public AmqpOutboundEndpoint update${entity.name}Outbound(final AmqpTemplate amqpTemplate) {
         AmqpOutboundEndpoint outbound = new AmqpOutboundEndpoint(amqpTemplate);
-        outbound.setExchangeName(RabbitMQ${entity.name}EntityListener.UPDATE_CHAMPIONSHIP_EXCHANGE_NAME);
+        outbound.setExchangeName(RabbitMQ${entity.name}EntityListener.UPDATE_${upperEntityName}_EXCHANGE_NAME);
         outbound.setRoutingKey("#");
         return outbound;
     }
@@ -58,7 +59,7 @@ public class RabbitMQ${entity.name}Channel {
     @ServiceActivator(inputChannel = "delete${entity.name}V1OutboundChannel")
     public AmqpOutboundEndpoint delete${entity.name}Outbound(final AmqpTemplate amqpTemplate) {
         AmqpOutboundEndpoint outbound = new AmqpOutboundEndpoint(amqpTemplate);
-        outbound.setExchangeName(RabbitMQ${entity.name}EntityListener.DELETE_CHAMPIONSHIP_EXCHANGE_NAME);
+        outbound.setExchangeName(RabbitMQ${entity.name}EntityListener.DELETE_${upperEntityName}_EXCHANGE_NAME);
         outbound.setRoutingKey("#");
         return outbound;
     }
