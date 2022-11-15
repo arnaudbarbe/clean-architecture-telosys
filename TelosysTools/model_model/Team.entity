@@ -1,5 +1,4 @@
 // Entity Team
-#PersistenceStorage(postgres)
 Team {
 	id: string {#uuid, #tostring, #hashcodeequals, @Id };
 	name: string {#tostring, #hashcodeequals, @DbSize(40)};

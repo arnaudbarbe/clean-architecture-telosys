@@ -1,5 +1,4 @@
 // Entity Championship
-#PersistenceStorage(postgres)
 Championship {
 
 	id: string {#uuid, #tostring, #hashcodeequals, @Id };

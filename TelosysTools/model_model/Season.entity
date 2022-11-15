@@ -1,5 +1,4 @@
 // Entity Season
-#PersistenceStorage(cassandra)
 Season {
 	id: string {#uuid, #tostring, #hashcodeequals, @Id };
 	name: string {#tostring, #hashcodeequals, @DbSize(40), @NotNull };
