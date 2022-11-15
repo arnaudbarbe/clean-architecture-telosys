@@ -1,8 +1,8 @@
+#set( $Tools = $loader.loadClass("tools.EntityBuilder"))
+$Tools.initialize($ROOT_PKG)
 package ${target.javaPackageFromFolder(${SRC})};
 
-import java.util.UUID;
-
-import javax.validation.constraints.NotNull;
+$Tools.getEntityImport($entity)
 
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -12,39 +12,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.FieldDefaults;
 
-#set( $dataFields = $entity.getAttributesByCriteria( $const.NOT_KEY, $const.NOT_IN_SELECTED_LINKS ) )
-#set( $objectFields = $entity.getAttributesByCriteria( $const.NOT_KEY, $const.IN_SELECTED_LINKS ) )
 
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 @FieldDefaults(level=AccessLevel.PRIVATE)
 @Getter
-@EqualsAndHashCode(of= {#foreach( $field in $entity.attributes )#if ( $field.hasTag("hashcodeequals"))"$field.name",#end #end})
-@ToString(of= {#foreach( $field in $entity.attributes )#if ( $field.hasTag("tostring"))"$field.name",#end #end})
+@EqualsAndHashCode(of= {$Tools.getHashCodeEqualsLombokAttributes($entity)})
+@ToString(of= {$Tools.getToStringLombokAttributes($entity)})
 @Builder(builderClassName = "${entity.name}Builder")
 public class ${entity.name} {
 
-#foreach( $key in $entity.keyAttributes )
-#if($key.isDatabaseNotNull())
-	@NotNull 
-#end
-#if($key.hasTag("uuid"))
-	final UUID $key.name#if($key.hasInitialValue())= ${key.initialValue}#end;
-#else
-	final $key.simpleType $key.name#if($key.hasInitialValue())= ${key.initialValue}#end;
-#end
-#end
-
-#foreach( $field in $dataFields )
-#if($field.isDatabaseNotNull())
-	@NotNull
-#end
-	final $field.simpleType $field.name#if($field.hasInitialValue())= ${field.initialValue}#end;
-#end
-#foreach( $object in $objectFields )
-#if($object.isDatabaseNotNull())
-	@NotNull
-#end
-	final $object.simpleType $object.name#if($object.hasInitialValue())= ${object.initialValue}#end;
-#end
-
+$Tools.getEntityDeclaration($entity)
 }

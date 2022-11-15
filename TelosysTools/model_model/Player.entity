@@ -1,10 +1,7 @@
 // Entity Player
-
+#PersistenceStorage(mongo)
 Player {
-
 	id: string {#uuid, #hashcodeequals, @Id };
 	firstName: string {#hashcodeequals, #tostring, @DbSize(40), @NotEmpty };
 	lastName: string {#hashcodeequals, #tostring, @DbSize(40), @NotEmpty };
-
-
 }

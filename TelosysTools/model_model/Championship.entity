@@ -1,7 +1,10 @@
-// Entity Team
+// Entity Championship
 #PersistenceStorage(postgres)
-Team {
+Championship {
+
 	id: string {#uuid, #tostring, #hashcodeequals, @Id };
 	name: string {#tostring, #hashcodeequals, @DbSize(40)};
-	season: Season {@NotNull };
+	player: Player {@NotNull};
+	season: Season {@NotNull};
+	league: League {@NotNull};
 }
